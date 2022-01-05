@@ -1,0 +1,8 @@
+[package]
+name = "fw"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+riscv-rt = "0.8"
+panic-halt = "0.2"
