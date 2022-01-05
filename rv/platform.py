@@ -2,7 +2,7 @@ from amaranth.vendor.lattice_ecp5 import LatticeECP5Platform
 from amaranth.build import Resource, Pins, Attrs, Clock
 
 
-class ADCPlatform(LatticeECP5Platform):
+class Platform(LatticeECP5Platform):
     device = "LFE5U-45F"
     package = "BG256"
     speed = "6"
