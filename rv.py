@@ -29,14 +29,12 @@ class Top(Elaboratable):
     modules. In this case it contains all our logic and the only submodules
     are the Minerva CPU core and Amaranth memory ports.
     """
-    def __init__(self, prom, imem=1024, dmem=1024):
+    def __init__(self, prom):
         # General purpose 32-bit output
         self.gpo = Signal(32)
 
         # Store parameters for use in elaborate
         self.prom = prom
-        self.imem_depth = imem
-        self.dmem_depth = dmem
 
     def elaborate(self, platform):
         """
@@ -51,8 +49,12 @@ class Top(Elaboratable):
         """
         m = Module()
 
-        imem = Memory(width=32, depth=self.imem_depth, init=self.prom)
-        dmem = Memory(width=32, depth=self.dmem_depth)
+        # Instantiate memories for instructions and data.
+        # Both are 32 bits by 1024 words (4KiB).
+        # The instruction memory is read-only and inititalised to the firmware,
+        # while the data memory is read-write and implicitly initialised to 0.
+        imem = Memory(width=32, depth=1024, init=self.prom)
+        dmem = Memory(width=32, depth=1024)
 
         imem_rp = m.submodules.imem_rp = imem.read_port()
         dmem_rp = m.submodules.dmem_rp = dmem.read_port(transparent=False)
@@ -102,8 +104,8 @@ def main():
     for i in range(len(fwb)//4):
         fw.append(int.from_bytes(fwb[i*4:(i+1)*4], "little"))
 
-    # Instantiate top-level module with 1kB of address and data memory.
-    top = Top(prom=fw, imem=1024, dmem=1024)
+    # Instantiate top-level module with 4kB of address and data memory.
+    top = Top(prom=fw)
 
     # If simulating, run the module for 1000 CPU cycles, writing the
     # simulation results to a VCD file we can view in gtkwave.
