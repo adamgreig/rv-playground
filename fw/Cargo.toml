@@ -3,6 +3,10 @@ name = "fw"
 version = "0.1.0"
 edition = "2021"
 
+[patch.crates-io]
+riscv = { git = "https://github.com/rust-embedded/riscv" }
+
 [dependencies]
+riscv = "0.7"
 riscv-rt = "0.8"
 panic-halt = "0.2"
